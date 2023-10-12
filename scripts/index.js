@@ -15,8 +15,7 @@ function createCard(cardStorage, removeCard) {
   const buttonRemove = card.querySelector('.card__delete-button');
 
   cardImg.src = cardStorage.link;
-  cardImg.alt = cardStorage.name;
-  cardTitle.textContent = cardStorage.name;
+  cardTitle.textContent = cardImg.alt = cardStorage.name;
 
   buttonRemove.addEventListener('click', removeCard);
   
@@ -35,3 +34,5 @@ function removeCard(event) {
 initialCards.forEach( (element) => {
   cardContainer.append(createCard(element, removeCard));
 })
+
+
