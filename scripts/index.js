@@ -34,5 +34,3 @@ function removeCard(event) {
 initialCards.forEach( (element) => {
   cardContainer.append(createCard(element, removeCard));
 })
-
-
