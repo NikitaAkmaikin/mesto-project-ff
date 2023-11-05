@@ -1,40 +1,56 @@
-
 import './pages/index.css';
-import {initialCards} from './components/cards.js';
-
-// @todo: Темплейт карточки
-
-const templateCard = document.querySelector('#card-template').content;
+import { createCard, removeCard } from'./components/card.js';
+import { initialCards } from './components/cards.js';
 
 // @todo: DOM узлы
 
 const cardContainer = document.querySelector('.places__list');
 
-// @todo: Функция создания карточки
-
-function createCard(cardStorage, removeCard) {
-  const card = templateCard.querySelector('.card').cloneNode(true);
-  const cardImg = card.querySelector('.card__image');
-  const cardTitle = card.querySelector('.card__title');
-  const buttonRemove = card.querySelector('.card__delete-button');
-
-  cardImg.src = cardStorage.link;
-  cardTitle.textContent = cardImg.alt = cardStorage.name;
-
-  buttonRemove.addEventListener('click', removeCard);
-  
-  return card;
-}
-
-// @todo: Функция удаления карточки
-
-function removeCard(event) {
-  const deleteTarget = event.target.closest('.card');
-  deleteTarget.remove();
-}
-
-// @todo: Вывести карточки на страницу
+// ==========================================  Вывести карточки на страницу  =================================================
 
 initialCards.forEach( (element) => {
-  cardContainer.append(createCard(element, removeCard));
+  cardContainer.prepend(createCard(element, removeCard));
 })
+
+// ==========================================  modal.js  =======================================================
+
+const editButton = document.querySelector('.profile__edit-button');
+const editModal = document.querySelector('.popup_type_edit');
+
+const addButton = document.querySelector('.profile__add-button');
+const addModal = document.querySelector('.popup_type_new-card');
+
+const imageModal = document.querySelector('.popup_type_image');
+
+const deleteButtonX = document.querySelectorAll('.popup__close');
+
+// Открытия Модального окна
+
+function openModal(modal) {
+  modal.classList.add('popup_is-opened');
+}
+
+// Закрытия Модального окна
+
+function closeModal(modal) { 
+  modal.classList.remove('popup_is-opened');
+}
+
+// Закрытия Модального окна
+
+deleteButtonX.forEach((evt) => {  
+  evt.addEventListener('click', (evt) => {
+    const deleteButtonX = evt.target.closest('.popup');
+    closeModal(deleteButtonX);
+  })  
+})
+
+// ==========================================  Окрытия Модального окна  =================================================
+
+editButton.addEventListener('click', () => {
+  openModal(editModal);
+});
+
+addButton.addEventListener('click', () => {
+  openModal(addModal)
+});
