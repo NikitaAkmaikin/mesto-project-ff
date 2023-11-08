@@ -1,56 +1,91 @@
 import './pages/index.css';
-import { createCard, removeCard } from'./components/card.js';
 import { initialCards } from './components/cards.js';
+import { createCard, removeCard } from'./components/card.js';
+import { openModal, closeModal } from'./components/modal.js';
 
 // @todo: DOM узлы
 
 const cardContainer = document.querySelector('.places__list');
 
-// ==========================================  Вывести карточки на страницу  =================================================
+const editName = document.querySelector('.profile__title')
+const editDescription = document.querySelector('.profile__description')
 
-initialCards.forEach( (element) => {
-  cardContainer.prepend(createCard(element, removeCard));
-})
-
-// ==========================================  modal.js  =======================================================
-
-const editButton = document.querySelector('.profile__edit-button');
 const editModal = document.querySelector('.popup_type_edit');
+const editButton = document.querySelector('.profile__edit-button');
+const editForm = document.forms['edit-profile'];
+const nameInput = editForm.elements.name;
+const jobInput = editForm.elements.description;
 
-const addButton = document.querySelector('.profile__add-button');
-const addModal = document.querySelector('.popup_type_new-card');
+const newCardModal = document.querySelector('.popup_type_new-card');
+const newCardButton = document.querySelector('.profile__add-button');
+const newCardForm = document.forms['new-place'];
+const nameCityInput = newCardForm.elements['place-name'];
+const linkImgInput = newCardForm.elements.link;
 
-const imageModal = document.querySelector('.popup_type_image');
+const imagePopup = document.querySelector('.popup_type_image');
+const imageLink = imagePopup.querySelector('.popup__image');
+const imageText = imagePopup.querySelector('.popup__caption');
 
 const deleteButtonX = document.querySelectorAll('.popup__close');
 
-// Открытия Модального окна
+// ==========================================  Изначальный вывод карточек на страницу  =================================================
 
-function openModal(modal) {
-  modal.classList.add('popup_is-opened');
-}
-
-// Закрытия Модального окна
-
-function closeModal(modal) { 
-  modal.classList.remove('popup_is-opened');
-}
-
-// Закрытия Модального окна
-
-deleteButtonX.forEach((evt) => {  
-  evt.addEventListener('click', (evt) => {
-    const deleteButtonX = evt.target.closest('.popup');
-    closeModal(deleteButtonX);
-  })  
+initialCards.forEach( (element) => {
+  cardContainer.append(createCard(element, removeCard, imgPopup));
 })
 
 // ==========================================  Окрытия Модального окна  =================================================
 
 editButton.addEventListener('click', () => {
+  nameInput.value = editName.textContent;
+  jobInput.value = editDescription.textContent;
   openModal(editModal);
 });
 
-addButton.addEventListener('click', () => {
-  openModal(addModal)
+newCardButton.addEventListener('click', () => {
+  nameCityInput.value = linkImgInput.value = '';
+  openModal(newCardModal);
 });
+
+function imgPopup(evt) {
+  imageLink.src = evt.target.src;
+  imageLink.alt = imageText.textContent = evt.target.alt;
+  openModal(imagePopup);
+}
+
+// ==========================================  Закрытия Модального окна  =================================================
+
+deleteButtonX.forEach((evt) => {  
+  evt.addEventListener('click', (el) => {
+    const ButtonX = el.target.closest('.popup');
+    closeModal(ButtonX);
+  })
+});
+
+// ==========================================  Редактирование профиля  =================================================
+
+function handleFormSubmit(evt) {
+  evt.preventDefault();
+
+  editName.textContent = nameInput.value;
+  editDescription.textContent = jobInput.value;
+  closeModal(editModal);
+}
+
+editForm.addEventListener('submit', handleFormSubmit);
+
+// ==========================================  Добавление новой карточки  =================================================
+
+function addCard(evt) {
+  evt.preventDefault();
+
+  const newCardStorage = {
+    name: nameCityInput.value,
+    link: linkImgInput.value,
+  };
+
+  cardContainer.prepend(createCard(newCardStorage, removeCard, imgPopup));
+  closeModal(newCardModal);
+}
+
+newCardForm.addEventListener('submit', addCard);
