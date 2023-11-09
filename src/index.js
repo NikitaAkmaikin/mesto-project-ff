@@ -3,7 +3,7 @@ import { initialCards } from './components/cards.js';
 import { createCard, removeCard } from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 
-// @todo: DOM узлы
+// ==========================================  DOM узлы  =================================================
 
 const cardContainer = document.querySelector('.places__list');
 
@@ -31,8 +31,16 @@ const deleteButtonX = document.querySelectorAll('.popup__close');
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
 initialCards.forEach( (element) => {
-  cardContainer.append(createCard(element, removeCard, imgPopup));
+  cardContainer.append(createCard(element, removeCard, buttonLike, imgPopup));
 })
+
+// Функция добавлениея/удаления Like
+
+function buttonLike(evt) {
+  if(evt.target.classList.contains('card__like-button')) {
+    evt.target.classList.toggle('card__like-button_is-active')
+  }
+}
 
 // ==========================================  Окрытия Модального окна  =================================================
 
@@ -84,7 +92,7 @@ function addCard(evt) {
     link: linkImgInput.value,
   };
 
-  cardContainer.prepend(createCard(newCardStorage, removeCard, imgPopup));
+  cardContainer.prepend(createCard(newCardStorage, removeCard, buttonLike, imgPopup));
   closeModal(newCardModal);
 }
 
