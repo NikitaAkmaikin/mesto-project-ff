@@ -1,11 +1,9 @@
-export {openModal, closeModal}
 // Открытия Модального окна
 
 function openModal(modal) {
   modal.classList.add('popup_is-opened'); // Плавная анимация попапа
   document.addEventListener('keydown', closeModalEsc);
   document.addEventListener('click', closeModalOverlay);
-  modal.classList.add('popup_is-opened');
 }
 
 // Закрытия Модального окна
@@ -14,7 +12,6 @@ function closeModal(modal) {
   modal.classList.remove('popup_is-opened'); // Плавная анимация попапа
   document.removeEventListener('keydown', closeModalEsc);
   document.removeEventListener('click', closeModalOverlay);
-  modal.classList.remove('popup_is-opened');
 }
 
 // Закрытия Модального окна при "Escape"
@@ -30,7 +27,8 @@ function closeModalEsc(evt) {
 
 function closeModalOverlay(evt) {
   if(evt.target.classList.contains('popup_is-opened')) {
-    const modalActive = document.querySelector('.popup_is-opened');
-    closeModal(modalActive)
+    closeModal(evt.target)
   }
 }
+
+export {openModal, closeModal}

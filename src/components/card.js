@@ -1,12 +1,10 @@
-export {createCard, removeCard};
-
 // @todo: Темплейт карточки
 
 const templateCard = document.querySelector('#card-template').content;
 
 // ============================================  Функция создания карточки  ============================================= <
 
-function createCard(cardStorage, removeCard, buttonLike, imgPopup) {
+function createCard(cardStorage, removeCard, handleImgPopup) {
   const card = templateCard.querySelector('.card').cloneNode(true);
   const cardImg = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
@@ -16,10 +14,18 @@ function createCard(cardStorage, removeCard, buttonLike, imgPopup) {
   cardTitle.textContent = cardImg.alt = cardStorage.name;
 
   buttonRemove.addEventListener('click', removeCard); // Удаление карточки
-  card.addEventListener('click', buttonLike); // Обработчик LIKE
-  cardImg.addEventListener('click', imgPopup); // Обработчик Img для попапа
+  card.addEventListener('click', handleButtonLike); // Обработчик LIKE
+  cardImg.addEventListener('click', handleImgPopup); // Обработчик Img для попапа
 
   return card;
+}
+
+// Функция добавлениея/удаления Like
+
+function handleButtonLike(evt) {
+  if(evt.target.classList.contains('card__like-button')) {
+    evt.target.classList.toggle('card__like-button_is-active')
+  }
 }
 
 // ============================================  Функция удаления карточки  ============================================= <
@@ -28,3 +34,5 @@ function removeCard(event) {
   const deleteTarget = event.target.closest('.card');
   deleteTarget.remove();
 }
+
+export {createCard, removeCard};
