@@ -9,7 +9,6 @@ const cardContainer = document.querySelector('.places__list');
 
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
-
 const profileModal = document.querySelector('.popup_type_edit');
 const profileButton = document.querySelector('.profile__edit-button');
 const profileForm = document.forms['edit-profile'];
@@ -31,8 +30,22 @@ const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
 initialCards.forEach( (el) => {
-  cardContainer.append(createCard(el, removeCard, handleImgPopup));
+  cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
 })
+
+// Функция добавлениея/удаления Like
+
+function handleButtonLike(evt) {
+  if(evt.target.classList.contains('card__like-button')) {
+    evt.target.classList.toggle('card__like-button_is-active')
+  }
+}
+
+// 7. Лайк карточки
+// Сделайте так, чтобы карточки можно было лайкать:
+// Если лайкнуть карточку, сердечко поменяет цвет
+// Обратите внимание что функцию обработчика лайка нужно передать в функцию создания карточки как аргумент.
+// Это понадобится в будущем для интеграции с API.
 
 // ==========================================  Окрытия Модального окна  =================================================
 
@@ -54,8 +67,8 @@ function handleImgPopup(evt) {
 
 // ==========================================  Закрытия Модального окна  =================================================
 
-closeButtonsPopups .forEach((evt) => {  
-  evt.addEventListener('click', (el) => {
+closeButtonsPopups.forEach((closeButton) => {  
+  closeButton.addEventListener('click', (el) => {
     const popup = el.target.closest('.popup');
     closeModal(popup);
   })
@@ -83,7 +96,7 @@ function addCard(evt) {
     link: newCardLinkImgInput.value,
   };
 
-  cardContainer.prepend(createCard(newCardStorage, removeCard, handleImgPopup));
+  cardContainer.prepend(createCard(newCardStorage, removeCard, handleButtonLike, handleImgPopup));
   evt.target.reset() // Очищаю значение в попапе
   closeModal(newCardModal);
 }

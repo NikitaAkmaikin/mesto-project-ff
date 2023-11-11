@@ -4,7 +4,7 @@ const templateCard = document.querySelector('#card-template').content;
 
 // ============================================  Функция создания карточки  ============================================= <
 
-function createCard(cardStorage, removeCard, handleImgPopup) {
+function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup) {
   const card = templateCard.querySelector('.card').cloneNode(true);
   const cardImg = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
@@ -20,14 +20,6 @@ function createCard(cardStorage, removeCard, handleImgPopup) {
   return card;
 }
 
-// Функция добавлениея/удаления Like
-
-function handleButtonLike(evt) {
-  if(evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active')
-  }
-}
-
 // ============================================  Функция удаления карточки  ============================================= <
 
 function removeCard(event) {
@@ -36,3 +28,9 @@ function removeCard(event) {
 }
 
 export {createCard, removeCard};
+
+// 7. Лайк карточки
+// Сделайте так, чтобы карточки можно было лайкать:
+// Если лайкнуть карточку, сердечко поменяет цвет
+// Обратите внимание что функцию обработчика лайка нужно передать в функцию создания карточки как аргумент.
+// Это понадобится в будущем для интеграции с API.
