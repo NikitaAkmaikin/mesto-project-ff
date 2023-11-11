@@ -8,13 +8,15 @@ function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup) {
   const card = templateCard.querySelector('.card').cloneNode(true);
   const cardImg = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
-  const buttonRemove = card.querySelector('.card__delete-button');
+  const cardButtonRemove = card.querySelector('.card__delete-button');
+  const cardLikeButton = card.querySelector('.card__like-button');
+
 
   cardImg.src = cardStorage.link;
   cardTitle.textContent = cardImg.alt = cardStorage.name;
 
-  buttonRemove.addEventListener('click', removeCard); // Удаление карточки
-  card.addEventListener('click', handleButtonLike); // Обработчик LIKE
+  cardButtonRemove.addEventListener('click', removeCard); // Удаление карточки
+  cardLikeButton.addEventListener('click', handleButtonLike); // Обработчик LIKE
   cardImg.addEventListener('click', handleImgPopup); // Обработчик Img для попапа
 
   return card;
@@ -27,10 +29,12 @@ function removeCard(event) {
   deleteTarget.remove();
 }
 
-export {createCard, removeCard};
+// Функция добавлениея/удаления Like
 
-// 7. Лайк карточки
-// Сделайте так, чтобы карточки можно было лайкать:
-// Если лайкнуть карточку, сердечко поменяет цвет
-// Обратите внимание что функцию обработчика лайка нужно передать в функцию создания карточки как аргумент.
-// Это понадобится в будущем для интеграции с API.
+function handleButtonLike(evt) {
+  if(evt.target.classList.contains('card__like-button')) {
+    evt.target.classList.toggle('card__like-button_is-active')
+  }
+}
+
+export {createCard, removeCard, handleButtonLike};

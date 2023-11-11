@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { initialCards } from './components/cards.js';
-import { createCard, removeCard } from'./components/card.js';
+import { createCard, removeCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 
 // ==========================================  DOM узлы  =================================================
@@ -32,20 +32,6 @@ const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 initialCards.forEach( (el) => {
   cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
 })
-
-// Функция добавлениея/удаления Like
-
-function handleButtonLike(evt) {
-  if(evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active')
-  }
-}
-
-// 7. Лайк карточки
-// Сделайте так, чтобы карточки можно было лайкать:
-// Если лайкнуть карточку, сердечко поменяет цвет
-// Обратите внимание что функцию обработчика лайка нужно передать в функцию создания карточки как аргумент.
-// Это понадобится в будущем для интеграции с API.
 
 // ==========================================  Окрытия Модального окна  =================================================
 
