@@ -2,7 +2,8 @@ import './pages/index.css';
 import { initialCards } from './components/cards.js';
 import { createCard, removeCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
-import {enableValidation} from'./components/validation.js';
+import {enableValidation, clearValidation} from'./components/validation.js';
+import {getProfile, loadingCards} from'./components/api.js'
 
 // ==========================================  DOM узлы  =================================================
 
@@ -10,6 +11,8 @@ const cardContainer = document.querySelector('.places__list');
 
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
+const profileImage = document.querySelector('.profile__image');
+
 const profileModal = document.querySelector('.popup_type_edit');
 const profileButton = document.querySelector('.profile__edit-button');
 const profileForm = document.forms['edit-profile'];
@@ -28,6 +31,15 @@ const imageText = imagePopup.querySelector('.popup__caption');
 
 const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
 initialCards.forEach( (el) => {
@@ -39,13 +51,13 @@ initialCards.forEach( (el) => {
 profileButton.addEventListener('click', () => {
   profileNameInput.value = profileName.textContent;
   profileJobInput.value = profileDescription.textContent;
+  clearValidation(profileForm, validationConfig);
   openModal(profileModal);
-  // 
 });
 
 newCardButton.addEventListener('click', () => {
+  clearValidation(newCardForm, validationConfig);
   openModal(newCardModal);
-  // 
 });
 
 function handleImgPopup(evt) {
@@ -94,12 +106,7 @@ newCardForm.addEventListener('submit', addCard);
 
 // ==========================================  Валидация профиля  =================================================
 
-enableValidation({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-});
+enableValidation(validationConfig);
 
+getProfile(profileName, profileDescription, profileImage);
+loadingCards(cardContainer, createCard, removeCard, handleButtonLike, handleImgPopup)
