@@ -1,9 +1,9 @@
 import './pages/index.css';
-import { initialCards } from './components/cards.js';
+// import { initialCards } from './components/cards.js';
 import { createCard, removeCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 import {enableValidation, clearValidation} from'./components/validation.js';
-import {getProfile, loadingCards} from'./components/api.js'
+import {loadingInfoProfile, loadingCards, editingProfile, addServerCard} from'./components/api.js'
 
 // ==========================================  DOM узлы  =================================================
 
@@ -42,9 +42,19 @@ const validationConfig = {
 
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
-initialCards.forEach( (el) => {
-  cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
-})
+loadingCards(cardContainer, createCard, removeCard, handleButtonLike, handleImgPopup)
+
+// Страрый код
+// initialCards.forEach( (el) => {
+//   cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
+// })
+
+// Promise.all()
+// .then((value) => {
+  
+// }).catch(err => {
+//   console.log('Ошибка, сервер не отвечает')
+// })
 
 // ==========================================  Окрытия Модального окна  =================================================
 
@@ -80,8 +90,9 @@ closeButtonsPopups.forEach((closeButton) => {
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
-  profileName.textContent = profileNameInput.value;
-  profileDescription.textContent = profileJobInput.value;
+  // profileName.textContent = profileNameInput.value;
+  // profileDescription.textContent = profileJobInput.value;
+  editingProfile(profileNameInput, profileJobInput);
   closeModal(profileModal);
 }
 
@@ -92,12 +103,13 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 function addCard(evt) {
   evt.preventDefault();
 
-  const newCardStorage = {
-    name: newCardNameCityInput.value,
-    link: newCardLinkImgInput.value,
-  };
+  // старый код
+  // const newCardStorage = {
+  //   name: newCardNameCityInput.value,
+  //   link: newCardLinkImgInput.value,
+  // };
 
-  cardContainer.prepend(createCard(newCardStorage, removeCard, handleButtonLike, handleImgPopup));
+  addServerCard(cardContainer, newCardNameCityInput, newCardLinkImgInput, createCard, removeCard, handleButtonLike, handleImgPopup);
   evt.target.reset() // Очищаю значение в попапе
   closeModal(newCardModal);
 }
@@ -108,5 +120,4 @@ newCardForm.addEventListener('submit', addCard);
 
 enableValidation(validationConfig);
 
-getProfile(profileName, profileDescription, profileImage);
-loadingCards(cardContainer, createCard, removeCard, handleButtonLike, handleImgPopup)
+loadingInfoProfile(profileName, profileDescription, profileImage);
