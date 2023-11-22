@@ -2,6 +2,7 @@ import './pages/index.css';
 import { initialCards } from './components/cards.js';
 import { createCard, removeCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
+import {enableValidation} from'./components/validation.js';
 
 // ==========================================  DOM узлы  =================================================
 
@@ -39,10 +40,12 @@ profileButton.addEventListener('click', () => {
   profileNameInput.value = profileName.textContent;
   profileJobInput.value = profileDescription.textContent;
   openModal(profileModal);
+  // 
 });
 
 newCardButton.addEventListener('click', () => {
   openModal(newCardModal);
+  // 
 });
 
 function handleImgPopup(evt) {
@@ -88,3 +91,15 @@ function addCard(evt) {
 }
 
 newCardForm.addEventListener('submit', addCard);
+
+// ==========================================  Валидация профиля  =================================================
+
+enableValidation({
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+});
+
