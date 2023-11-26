@@ -1,96 +1,122 @@
-// 1a10498b-0e1a-4d80-82be-5e39821adf2c
+const token = "1a10498b-0e1a-4d80-82be-5e39821adf2c";
 // wff-cohort-1
+
+const apiData = () => {
+  return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-1/cards', {
+    method: 'GET',
+    headers: {
+      authorization: token
+    }
+  })
+  .then(handleResponse)
+}
+
+// apiData()
 
 // ==========================================  Загрузка информации о пользователе с сервера  =================================================
 
-const loadingInfoProfile = (profileName, profileDescription, profileImage) => {
+const loadingInfoProfile = () => {
   return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-1/users/me', {
-  method: 'GET',
-  headers: {
-    authorization: '1a10498b-0e1a-4d80-82be-5e39821adf2c'
-  }
-})
-  .then(res => res.json())
-  .then((result) => {
-    profileName.textContent = result.name;
-    profileDescription.textContent = result.about;
-    profileImage.style.backgroundImage = `url('${result.avatar}')`;
+    method: 'GET',
+    headers: {
+      authorization: token
+    }
   })
-  .catch((err) => {
-    console.log('Ошибка. Запрос не выполнен')
-  })
+  .then(handleResponse)
 }
 
 // ==========================================  Загрузка карточек с сервера  =================================================
 
-const loadingCards = (cardContainer, createCard, removeCard, handleButtonLike, handleImgPopup) => {
+const loadingCards = () => {
   return fetch('https://nomoreparties.co/v1/wff-cohort-1/cards', {
-  method: 'GET',
-  headers: {
-    authorization: '1a10498b-0e1a-4d80-82be-5e39821adf2c'
-  }
-})
-  .then(res => res.json())
-  .then((result) => {    
-    result.forEach( (el) => {
-      cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
+    method: 'GET',
+    headers: {
+      authorization: token
+    }
+  })
+  .then(handleResponse)
+}
+
+// ==========================================  Редактирование Аватара  =================================================
+
+const editingProfileAvatar = (profileAvatatInput) => {
+  return fetch('https://nomoreparties.co/v1/wff-cohort-1/users/me/avatar', {
+    method: 'PATCH',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    },
+      body: JSON.stringify({
+      avatar: profileAvatatInput,
+    })
+  })
+  .then(handleResponse)
+  .catch((err) => {
+    console.log(err)
+  });
+}
+
+// ==========================================  Редактирование профиля  =================================================
+
+const editingProfile = (profileName, profileDescription) => {
+  return fetch('https://nomoreparties.co/v1/wff-cohort-1/users/me', {
+    method: 'PATCH',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    },
+      body: JSON.stringify({
+      name: profileName,
+      about: profileDescription
     })
   })
   .catch((err) => {
-    console.log('Ошибка. Запрос не выполнен')
-  })
-}
-// ==========================================  Редактирование профиля  =================================================
-
-const editingProfile = (profileNameInput, profileJobInput) => {
-  return fetch('https://nomoreparties.co/v1/wff-cohort-1/users/me', {
-  method: 'PATCH',
-  headers: {
-    authorization: '1a10498b-0e1a-4d80-82be-5e39821adf2c',
-  'Content-Type': 'application/json'
-  },
-    body: JSON.stringify({
-    name: 'Marie Skłodowska Curie',
-    about: 'Physicist and Chemist'
-  })
-})
-  .then(res => res.json())
-  .then((result) => {
-    console.log(result.name);
-    result.name = profileNameInput.value;
-    result.about = profileJobInput.value;
-  })
-  .catch((err) => {
-    console.log('Ошибка. Запрос не выполнен')
+    console.log(err)
   })
 }
 
 // ==========================================  Добавление новой карточки  =================================================
 
-const addServerCard = (cardContainer, newCardNameCityInput, newCardLinkImgInput, createCard, removeCard, handleButtonLike, handleImgPopup) => {
+const addCardToServer = (newCardNameCityInput, newCardLinkImgInput) => {
   return fetch('https://nomoreparties.co/v1/wff-cohort-1/cards', {
-  method: 'Post',
-  headers: {
-    authorization: '1a10498b-0e1a-4d80-82be-5e39821adf2c',
-  'Content-Type': 'application/json'
-  },
-    body: JSON.stringify({
-      name: newCardNameCityInput.value,
-      link: newCardLinkImgInput.value
+    method: 'POST',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    },
+      body: JSON.stringify({
+        name: newCardNameCityInput.value,
+        link: newCardLinkImgInput.value
+    })
   })
-})
-  .then(res => res.json())
-  .then((result) => {
-    console.log(result.link);
-    cardContainer.prepend(createCard(result, removeCard, handleButtonLike, handleImgPopup))
+  .then(handleResponse)
+}
+
+// ==========================================  Удаление новой карточки  =================================================
+
+const deleteCardFromServer = (cardId) => {
+  return fetch(`https://nomoreparties.co/v1/wff-cohort-1/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    }
   })
-  .catch((err) => {
-    console.log('Ошибка. Запрос не выполнен')
-  })
+  .then(handleResponse)
 }
 
 
 
 
 
-export {loadingInfoProfile, loadingCards, editingProfile, addServerCard}
+
+
+
+const handleResponse = (response) => {
+  if (response.ok) {
+    return response.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+};
+
+export {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer}

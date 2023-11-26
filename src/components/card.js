@@ -4,18 +4,29 @@ const templateCard = document.querySelector('#card-template').content;
 
 // ============================================  Функция создания карточки  ============================================= <
 
-function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup) {
+function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup, handleDeleteCard) {
   const card = templateCard.querySelector('.card').cloneNode(true);
   const cardImg = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
-  const cardButtonRemove = card.querySelector('.card__delete-button');
+  const cardRemoveButton = card.querySelector('.card__delete-button');
   const cardLikeButton = card.querySelector('.card__like-button');
-
+  const cardLikeCount = card.querySelector('.card__like-counter');
+  const cardId = card.id = cardStorage["_id"];
+  const apiId = 'cabca2f13d88c94083c8814a';
 
   cardImg.src = cardStorage.link;
   cardTitle.textContent = cardImg.alt = cardStorage.name;
+  cardLikeCount.textContent = cardStorage.likes.length;
 
-  cardButtonRemove.addEventListener('click', removeCard); // Удаление карточки
+  if(cardStorage.owner._id !== apiId) { // удаление кнопки DELETE с чужой карточки
+    cardRemoveButton.style.display = 'none';
+  } 
+   else {
+    cardRemoveButton.addEventListener('click', () => {
+      handleСonfirmDeletePopup(cardId);
+  });
+  }
+
   cardLikeButton.addEventListener('click', handleButtonLike); // Обработчик LIKE
   cardImg.addEventListener('click', handleImgPopup); // Обработчик Img для попапа
 
@@ -24,9 +35,10 @@ function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup) {
 
 // ============================================  Функция удаления карточки  ============================================= <
 
-function removeCard(event) {
-  const deleteTarget = event.target.closest('.card');
-  deleteTarget.remove();
+function removeCard(card, evt) {
+  // const deleteTarget = card.target;
+  // console.log(evt.target.querySelector('.popup__button'))
+  // deleteTarget.remove();
 }
 
 // Функция добавлениея/удаления Like

@@ -33,6 +33,7 @@
     </p>
   </footer>
 
+<!-- popup редактирования профиля -->
   <div class="popup popup_type_edit popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
@@ -47,6 +48,20 @@
     </div>
   </div>
 
+<!-- popup смены изображения аватара -->
+<div class="popup popup_avatar popup_is-animated">
+  <div class="popup__content">
+    <button type="button" class="popup__close"></button>
+    <h3 class="popup__title">Обновить аватар</h3>
+    <form class="popup__form" name="avatar-profile">
+      <input type="url" id="link_avatar" name="link" class="popup__input popup__input_avatar" placeholder="Ссылка на картинку" required type="url">
+      <span class="link_avatar-error popup__input-error"></span>
+      <button type="submit" class="button popup__button">Сохранить</button>
+    </form>
+  </div>
+</div>
+
+<!-- popup создания новой карточки -->
   <div class="popup popup_type_new-card popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
@@ -60,7 +75,19 @@
       </form>
     </div>
   </div>
-  
+
+<!-- popup подтверждения удаления карточки -->
+  <div class="popup popup_confirm-delete-card popup_is-animated">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Вы уверены?</h3>
+      <form class="popup__form" name="delete-card" >
+        <button type="submit" class="button popup__button" data-id="">Дa</button>
+      </form>
+    </div>
+  </div>
+
+<!-- popup увеличения картинки карточки -->
   <div class="popup popup_type_image popup_is-animated">
     <div class="popup__content popup__content_content_image">
       <button type="button" class="popup__close"></button>
@@ -70,17 +97,17 @@
   </div>
 </div>
 
-<!--Относится к реализации 4-го спринта-->
+<!-- Card -->
 <template id="card-template">
-  <!--Про тег темплейт студенты узнают из уроков 4-го спринта-->
-  <li class="places__item card">
+  <li class="places__item card" id="">
     <img class="card__image" src="" alt="" />
     <button type="button" class="card__delete-button"></button>
-    <!--Фоновое, инлайном-->
     <div class="card__description">
-      <h2 class="card__title">
-      </h2>
-      <button type="button" class="card__like-button"></button>
+      <h2 class="card__title"></h2>
+      <div class="card__like">
+        <button type="button" class="card__like-button"></button>
+        <span class="card__like-counter"></span>
+      </div>
     </div>
   </li>
 </template>

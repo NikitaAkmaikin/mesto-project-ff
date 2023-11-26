@@ -1,13 +1,17 @@
 import './pages/index.css';
-// import { initialCards } from './components/cards.js';
 import { createCard, removeCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 import {enableValidation, clearValidation} from'./components/validation.js';
-import {loadingInfoProfile, loadingCards, editingProfile, addServerCard} from'./components/api.js'
+import {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer} from'./components/api.js'
 
 // ==========================================  DOM узлы  =================================================
 
 const cardContainer = document.querySelector('.places__list');
+
+const profileAvatarButton = document.querySelector('.profile__image');
+const profileAvatarModal = document.querySelector('.popup_avatar');
+const profileAvatarForm = document.forms['avatar-profile'];
+const profileAvatarInput = profileAvatarForm.elements.link;
 
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
@@ -29,6 +33,10 @@ const imagePopup = document.querySelector('.popup_type_image');
 const imageLink = imagePopup.querySelector('.popup__image');
 const imageText = imagePopup.querySelector('.popup__caption');
 
+const cardСonfirmDeleteModal = document.querySelector('.popup_confirm-delete-card');
+const cardRemoveForm = document.forms['delete-card'];
+const cardRemoveFormButton = cardRemoveForm.querySelector('.popup__button');
+
 const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 
 const validationConfig = {
@@ -42,21 +50,52 @@ const validationConfig = {
 
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
-loadingCards(cardContainer, createCard, removeCard, handleButtonLike, handleImgPopup)
+Promise.all([loadingCards, loadingInfoProfile])
+.then(() => {
 
-// Страрый код
-// initialCards.forEach( (el) => {
-//   cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup));
-// })
+  loadingCards()
+  .then((result) => {    
+    result.forEach( (el) => {
+      cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup));
+    })
+  });
 
-// Promise.all()
-// .then((value) => {
-  
-// }).catch(err => {
-//   console.log('Ошибка, сервер не отвечает')
-// })
+  loadingInfoProfile()
+  .then((result) => {
+    profileName.textContent = result.name;
+    profileDescription.textContent = result.about;
+    profileImage.style.backgroundImage = `url('${result.avatar}')`;
+  })
+
+})
+.catch(err => {
+  console.log(err)
+})
+
+// ==========================================  Добавление новой карточки  =================================================
+
+function addCard(evt) {
+  evt.preventDefault();
+
+  addCardToServer(newCardNameCityInput, newCardLinkImgInput)
+  .then((result) => {
+    cardContainer.prepend(createCard(result, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup))
+  })
+  .catch(err => {
+    console.log(err)
+  });
+
+  evt.target.reset() // Очищаю значение в попапе
+  closeModal(newCardModal);
+}
+
+newCardForm.addEventListener('submit', addCard);
 
 // ==========================================  Окрытия Модального окна  =================================================
+
+profileAvatarButton.addEventListener('click', () => {
+  openModal(profileAvatarModal);
+});
 
 profileButton.addEventListener('click', () => {
   profileNameInput.value = profileName.textContent;
@@ -76,6 +115,11 @@ function handleImgPopup(evt) {
   openModal(imagePopup);
 }
 
+function handleСonfirmDeletePopup(id) {
+  cardRemoveFormButton.dataset.id = id;
+  openModal(cardСonfirmDeleteModal);
+}
+
 // ==========================================  Закрытия Модального окна  =================================================
 
 closeButtonsPopups.forEach((closeButton) => {  
@@ -85,39 +129,53 @@ closeButtonsPopups.forEach((closeButton) => {
   })
 });
 
-// ==========================================  Редактирование профиля  =================================================
+// ==========================================  Редактирование/Закрытия Avatar  =================================================
+
+function handleProfileAvatarFormSubmit(evt) {
+  evt.preventDefault();
+
+  editingProfileAvatar(profileAvatarInput.value)
+  .then(res => {
+    profileAvatarButton.style.backgroundImage = `url('${res.avatar}')`;
+    console.log(res)
+    closeModal(profileAvatarModal);
+
+  })
+}
+
+profileAvatarForm.addEventListener('submit', handleProfileAvatarFormSubmit);
+
+// ==========================================  Редактирование/Закрытия профиля  =================================================
 
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
-  // profileName.textContent = profileNameInput.value;
-  // profileDescription.textContent = profileJobInput.value;
-  editingProfile(profileNameInput, profileJobInput);
+  profileName.textContent = profileNameInput.value;
+  profileDescription.textContent = profileJobInput.value;
+
+  editingProfile(profileName.textContent, profileDescription.textContent);
   closeModal(profileModal);
 }
 
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 
-// ==========================================  Добавление новой карточки  =================================================
+// ==========================================  Удаление карточки  =================================================
 
-function addCard(evt) {
+function handleRemoveCard(evt) {
   evt.preventDefault();
 
-  // старый код
-  // const newCardStorage = {
-  //   name: newCardNameCityInput.value,
-  //   link: newCardLinkImgInput.value,
-  // };
+  const cardId = cardRemoveFormButton.dataset.id; 
 
-  addServerCard(cardContainer, newCardNameCityInput, newCardLinkImgInput, createCard, removeCard, handleButtonLike, handleImgPopup);
-  evt.target.reset() // Очищаю значение в попапе
-  closeModal(newCardModal);
+  deleteCardFromServer(cardId)
+  .then(() => {
+    const deleteTarget = document.querySelector(`[id='${cardId}']`);
+    deleteTarget.remove();
+    closeModal(cardСonfirmDeleteModal);
+  })
 }
 
-newCardForm.addEventListener('submit', addCard);
+cardRemoveForm.addEventListener('click', handleRemoveCard)
 
 // ==========================================  Валидация профиля  =================================================
 
 enableValidation(validationConfig);
-
-loadingInfoProfile(profileName, profileDescription, profileImage);
