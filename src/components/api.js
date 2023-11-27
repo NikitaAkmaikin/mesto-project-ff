@@ -1,18 +1,6 @@
 const token = "1a10498b-0e1a-4d80-82be-5e39821adf2c";
 // wff-cohort-1
 
-const apiData = () => {
-  return fetch('https://mesto.nomoreparties.co/v1/wff-cohort-1/cards', {
-    method: 'GET',
-    headers: {
-      authorization: token
-    }
-  })
-  .then(handleResponse)
-}
-
-// apiData()
-
 // ==========================================  Загрузка информации о пользователе с сервера  =================================================
 
 const loadingInfoProfile = () => {
@@ -35,6 +23,8 @@ const loadingCards = () => {
     }
   })
   .then(handleResponse)
+  // .then(response => response.json())
+  // .then(res => console.log(res))
 }
 
 // ==========================================  Редактирование Аватара  =================================================
@@ -105,18 +95,40 @@ const deleteCardFromServer = (cardId) => {
   .then(handleResponse)
 }
 
+// ==========================================  Постановка лайка  =================================================
+
+const addLikeServer = (cardId) => {
+  return fetch(`https://nomoreparties.co/v1/wff-cohort-1/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    }
+  })
+  .then(handleResponse)
+}
+
+// ==========================================  Снятие лайка  =================================================
+
+const removeLikeServer = (cardId) => {
+  return fetch(`https://nomoreparties.co/v1/wff-cohort-1/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: {
+      authorization: token,
+    'Content-Type': 'application/json'
+    }
+  })
+  .then(handleResponse)
+}
 
 
-
-
-
-
+// ==========================================  Общие  =================================================
 
 const handleResponse = (response) => {
   if (response.ok) {
     return response.json();
   }
   return Promise.reject(`Ошибка: ${res.status}`);
-};
+}
 
-export {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer}
+export {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer, addLikeServer, removeLikeServer}

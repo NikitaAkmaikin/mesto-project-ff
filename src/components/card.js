@@ -1,10 +1,12 @@
+import {addLikeServer, removeLikeServer} from'./api.js'
+
 // @todo: Темплейт карточки
 
 const templateCard = document.querySelector('#card-template').content;
 
 // ============================================  Функция создания карточки  ============================================= <
 
-function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup, handleDeleteCard) {
+function createCard(cardStorage, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup) {
   const card = templateCard.querySelector('.card').cloneNode(true);
   const cardImg = card.querySelector('.card__image');
   const cardTitle = card.querySelector('.card__title');
@@ -16,6 +18,7 @@ function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup, h
 
   cardImg.src = cardStorage.link;
   cardTitle.textContent = cardImg.alt = cardStorage.name;
+
   cardLikeCount.textContent = cardStorage.likes.length;
 
   if(cardStorage.owner._id !== apiId) { // удаление кнопки DELETE с чужой карточки
@@ -27,26 +30,32 @@ function createCard(cardStorage, removeCard, handleButtonLike, handleImgPopup, h
   });
   }
 
-  cardLikeButton.addEventListener('click', handleButtonLike); // Обработчик LIKE
+  cardLikeButton.addEventListener('click', (evt) => handleButtonLike(evt, cardId, cardLikeCount)); // Обработчик LIKE
   cardImg.addEventListener('click', handleImgPopup); // Обработчик Img для попапа
 
   return card;
 }
 
-// ============================================  Функция удаления карточки  ============================================= <
+// ============================================  Добавлениея/удаления Like  ============================================= <
 
-function removeCard(card, evt) {
-  // const deleteTarget = card.target;
-  // console.log(evt.target.querySelector('.popup__button'))
-  // deleteTarget.remove();
+function handleButtonLike(evt, cardId, cardLikeCount) {
+  if(!evt.target.classList.contains('card__like-button_is-active')) {
+
+    addLikeServer(cardId)
+    .then(res => {
+      evt.target.classList.add('card__like-button_is-active');
+      cardLikeCount.textContent = res.likes.length;
+    })
+    .catch(err => console.log(err))
+    
+  } else {
+    removeLikeServer(cardId)
+    .then(res => {
+      evt.target.classList.remove('card__like-button_is-active')
+      cardLikeCount.textContent = res.likes.length;
+    })
+    .catch(err => console.log(err))
+  };
 }
 
-// Функция добавлениея/удаления Like
-
-function handleButtonLike(evt) {
-  if(evt.target.classList.contains('card__like-button')) {
-    evt.target.classList.toggle('card__like-button_is-active')
-  }
-}
-
-export {createCard, removeCard, handleButtonLike};
+export {createCard, handleButtonLike};

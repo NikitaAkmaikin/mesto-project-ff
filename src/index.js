@@ -1,5 +1,5 @@
 import './pages/index.css';
-import { createCard, removeCard, handleButtonLike} from'./components/card.js';
+import { createCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 import {enableValidation, clearValidation} from'./components/validation.js';
 import {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer} from'./components/api.js'
@@ -35,7 +35,7 @@ const imageText = imagePopup.querySelector('.popup__caption');
 
 const cardСonfirmDeleteModal = document.querySelector('.popup_confirm-delete-card');
 const cardRemoveForm = document.forms['delete-card'];
-const cardRemoveFormButton = cardRemoveForm.querySelector('.popup__button');
+// const cardRemoveFormButton = cardRemoveForm.querySelector('.popup__button');
 
 const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 
@@ -56,7 +56,7 @@ Promise.all([loadingCards, loadingInfoProfile])
   loadingCards()
   .then((result) => {    
     result.forEach( (el) => {
-      cardContainer.append(createCard(el, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup));
+      cardContainer.append(createCard(el, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup));
     })
   });
 
@@ -79,7 +79,7 @@ function addCard(evt) {
 
   addCardToServer(newCardNameCityInput, newCardLinkImgInput)
   .then((result) => {
-    cardContainer.prepend(createCard(result, removeCard, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup))
+    cardContainer.prepend(createCard(result, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup))
   })
   .catch(err => {
     console.log(err)
@@ -116,7 +116,7 @@ function handleImgPopup(evt) {
 }
 
 function handleСonfirmDeletePopup(id) {
-  cardRemoveFormButton.dataset.id = id;
+  cardRemoveForm.dataset.id = id;
   openModal(cardСonfirmDeleteModal);
 }
 
@@ -164,7 +164,7 @@ profileForm.addEventListener('submit', handleProfileFormSubmit);
 function handleRemoveCard(evt) {
   evt.preventDefault();
 
-  const cardId = cardRemoveFormButton.dataset.id; 
+  const cardId = cardRemoveForm.dataset.id; 
 
   deleteCardFromServer(cardId)
   .then(() => {
