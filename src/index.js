@@ -12,6 +12,7 @@ const profileAvatarButton = document.querySelector('.profile__image');
 const profileAvatarModal = document.querySelector('.popup_avatar');
 const profileAvatarForm = document.forms['avatar-profile'];
 const profileAvatarInput = profileAvatarForm.elements.link;
+const profileAvatarSubmitButton = profileAvatarForm.querySelector('.popup__button');
 
 const profileName = document.querySelector('.profile__title')
 const profileDescription = document.querySelector('.profile__description')
@@ -28,6 +29,7 @@ const newCardButton = document.querySelector('.profile__add-button');
 const newCardForm = document.forms['new-place'];
 const newCardNameCityInput = newCardForm.elements['place-name'];
 const newCardLinkImgInput = newCardForm.elements.link;
+const newCardFormButton = newCardForm.querySelector('.popup__button');
 
 const imagePopup = document.querySelector('.popup_type_image');
 const imageLink = imagePopup.querySelector('.popup__image');
@@ -35,7 +37,6 @@ const imageText = imagePopup.querySelector('.popup__caption');
 
 const cardСonfirmDeleteModal = document.querySelector('.popup_confirm-delete-card');
 const cardRemoveForm = document.forms['delete-card'];
-// const cardRemoveFormButton = cardRemoveForm.querySelector('.popup__button');
 
 const closeButtonsPopups  = document.querySelectorAll('.popup__close');
 
@@ -77,12 +78,17 @@ Promise.all([loadingCards, loadingInfoProfile])
 function addCard(evt) {
   evt.preventDefault();
 
+  newCardFormButton.textContent = 'Сохранение...';
+
   addCardToServer(newCardNameCityInput, newCardLinkImgInput)
   .then((result) => {
     cardContainer.prepend(createCard(result, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup))
   })
   .catch(err => {
     console.log(err)
+  })
+  .finally(() => {
+    newCardFormButton.textContent = 'Сохранить';
   });
 
   evt.target.reset() // Очищаю значение в попапе
@@ -122,7 +128,7 @@ function handleСonfirmDeletePopup(id) {
 
 // ==========================================  Закрытия Модального окна  =================================================
 
-closeButtonsPopups.forEach((closeButton) => {  
+closeButtonsPopups.forEach((closeButton) => {
   closeButton.addEventListener('click', (el) => {
     const popup = el.target.closest('.popup');
     closeModal(popup);
@@ -133,14 +139,17 @@ closeButtonsPopups.forEach((closeButton) => {
 
 function handleProfileAvatarFormSubmit(evt) {
   evt.preventDefault();
-
+  
+  profileAvatarSubmitButton.textContent = 'Сохранение...'
   editingProfileAvatar(profileAvatarInput.value)
   .then(res => {
     profileAvatarButton.style.backgroundImage = `url('${res.avatar}')`;
     console.log(res)
     closeModal(profileAvatarModal);
-
   })
+  .finally(() => {
+    newCardFormButton.textContent = 'Сохранить';
+  });
 }
 
 profileAvatarForm.addEventListener('submit', handleProfileAvatarFormSubmit);

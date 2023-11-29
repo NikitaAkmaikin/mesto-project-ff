@@ -23,8 +23,7 @@ function createCard(cardStorage, handleButtonLike, handleImgPopup, handleСonfir
 
   if(cardStorage.owner._id !== apiId) { // удаление кнопки DELETE с чужой карточки
     cardRemoveButton.style.display = 'none';
-  } 
-   else {
+  } else {
     cardRemoveButton.addEventListener('click', () => {
       handleСonfirmDeletePopup(cardId);
   });
