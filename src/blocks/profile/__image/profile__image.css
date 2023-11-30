@@ -4,6 +4,7 @@
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
+  cursor: pointer;
   background-size: cover;
   /*Ковер тут симпатичнее контейна*/
   background-position: center;
