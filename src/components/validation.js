@@ -1,24 +1,24 @@
 // ========================================== Добавление ошибки ==========================================
 
-const showInputError = (formElement, inputElement, errorMessage, inputErrorClass, errorClass) => {
+const showInputError = (formElement, inputElement, errorMessage, data) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.add(`${inputErrorClass}`);
+  inputElement.classList.add(`${data.inputErrorClass}`);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add(`${errorClass}`);
+  errorElement.classList.add(`${data.errorClass}`);
 };
 
 // ========================================== Удаление ошибки ==========================================
 
-const hideInputError = (formElement, inputElement, inputErrorClass, errorClass) => {
+const hideInputError = (formElement, inputElement, data) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
-  inputElement.classList.remove(`${inputErrorClass}`);
-  errorElement.classList.remove(`${errorClass}`);
+  inputElement.classList.remove(`${data.inputErrorClass}`);
+  errorElement.classList.remove(`${data.errorClass}`);
   errorElement.textContent = '';
 };
 
 // ========================================== Проверка валидности поля ==========================================
 
-const checkInputValidity = (formElement, inputElement, inputErrorClass, errorClass) => {
+const checkInputValidity = (formElement, inputElement, data) => {
   // Тонкая настройка текста "ошибки"
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
@@ -27,9 +27,9 @@ const checkInputValidity = (formElement, inputElement, inputErrorClass, errorCla
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage, inputErrorClass, errorClass);
+    showInputError(formElement, inputElement, inputElement.validationMessage, data);
   } else {
-    hideInputError(formElement, inputElement, inputErrorClass, errorClass);
+    hideInputError(formElement, inputElement, data);
   }
 
 };
@@ -46,39 +46,33 @@ function hasInvalidInput(inputList) {
 
 // ========================================== Активность/не активноесть кнопки "Сохранить" ==========================================
 
-function toggleButtonState(inputList, buttonElement, inactiveButtonClass) {
+function toggleButtonState(inputList, buttonElement, data) {
 
   if ( hasInvalidInput(inputList) ) {
-    buttonElement.classList.add(`${inactiveButtonClass}`);
+    buttonElement.classList.add(`${data.inactiveButtonClass}`);
     buttonElement.setAttribute("disabled", "")
   }else {
     buttonElement.removeAttribute("disabled", "")
-    buttonElement.classList.remove(`${inactiveButtonClass}`);
+    buttonElement.classList.remove(`${data.inactiveButtonClass}`);
   }
 
 }
 
 // ========================================== Валидация полей ==========================================
 
-const setEventListeners = (
-  formElement,
-  inputSelector,
-  submitButtonSelector,
-  inactiveButtonClass,
-  inputErrorClass,
-  errorClass) => {
+const setEventListeners = ( formElement, data) => {
 
-  const inputList = Array.from(formElement.querySelectorAll(`${inputSelector}`));
-  const buttonElement = formElement.querySelector(`${submitButtonSelector}`);
+  const inputList = Array.from(formElement.querySelectorAll(`${data.inputSelector}`));
+  const buttonElement = formElement.querySelector(`${data.submitButtonSelector}`);
   
-  toggleButtonState(inputList, buttonElement, inactiveButtonClass);
+  toggleButtonState(inputList, buttonElement, data);
 
   inputList.forEach((inputElement) => {
 
     inputElement.addEventListener('input', function () {
 
-      checkInputValidity(formElement, inputElement, inputErrorClass, errorClass);
-      toggleButtonState(inputList, buttonElement, inactiveButtonClass);
+      checkInputValidity(formElement, inputElement, data);
+      toggleButtonState(inputList, buttonElement, data);
 
     });
 
@@ -87,15 +81,6 @@ const setEventListeners = (
 };
 
 // ========================================== Валидация Форм ==========================================
-
-// enableValidation({
-//   formSelector: '.popup__form',
-//   inputSelector: '.popup__input',
-//   submitButtonSelector: '.popup__button',
-//   inactiveButtonClass: 'popup__button_disabled',
-//   inputErrorClass: 'popup__input_type_error',
-//   errorClass: 'popup__error_visible'
-// });
 
 const enableValidation = (data) => {
 
@@ -107,13 +92,7 @@ const enableValidation = (data) => {
       evt.preventDefault();
     });
 
-    setEventListeners(
-      formElement,
-      data.inputSelector,
-      data.submitButtonSelector,
-      data.inactiveButtonClass,
-      data.inputErrorClass,
-      data.errorClass)
+    setEventListeners(formElement, data)
   });
 };
 
@@ -122,11 +101,10 @@ function clearValidation(formElement, data) {
   const buttonElement = formElement.querySelector(`${data.submitButtonSelector}`);
 
   inputList.forEach((inputElement) => {
-    hideInputError(formElement, inputElement, data.inputErrorClass, data.errorClass)
+    hideInputError(formElement, inputElement, data)
   })
 
   buttonElement.classList.add(data.inactiveButtonClass);
 };
-
 
 export {enableValidation, clearValidation};

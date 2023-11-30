@@ -3,75 +3,52 @@ import { createCard, handleButtonLike} from'./components/card.js';
 import { openModal, closeModal } from'./components/modal.js';
 import {enableValidation, clearValidation} from'./components/validation.js';
 import {loadingInfoProfile, loadingCards, editingProfileAvatar, editingProfile, addCardToServer, deleteCardFromServer} from'./components/api.js'
-
-// ==========================================  DOM узлы  =================================================
-
-const cardContainer = document.querySelector('.places__list');
-
-const profileAvatarButton = document.querySelector('.profile__image');
-const profileAvatarModal = document.querySelector('.popup_avatar');
-const profileAvatarForm = document.forms['avatar-profile'];
-const profileAvatarInput = profileAvatarForm.elements.link;
-const profileAvatarSubmitButton = profileAvatarForm.querySelector('.popup__button');
-
-const profileName = document.querySelector('.profile__title')
-const profileDescription = document.querySelector('.profile__description')
-const profileImage = document.querySelector('.profile__image');
-
-const profileModal = document.querySelector('.popup_type_edit');
-const profileButton = document.querySelector('.profile__edit-button');
-const profileForm = document.forms['edit-profile'];
-const profileNameInput = profileForm.elements.name;
-const profileJobInput = profileForm.elements.description;
-
-const newCardModal = document.querySelector('.popup_type_new-card');
-const newCardButton = document.querySelector('.profile__add-button');
-const newCardForm = document.forms['new-place'];
-const newCardNameCityInput = newCardForm.elements['place-name'];
-const newCardLinkImgInput = newCardForm.elements.link;
-const newCardFormButton = newCardForm.querySelector('.popup__button');
-
-const imagePopup = document.querySelector('.popup_type_image');
-const imageLink = imagePopup.querySelector('.popup__image');
-const imageText = imagePopup.querySelector('.popup__caption');
-
-const cardСonfirmDeleteModal = document.querySelector('.popup_confirm-delete-card');
-const cardRemoveForm = document.forms['delete-card'];
-
-const closeButtonsPopups  = document.querySelectorAll('.popup__close');
-
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}
+import {
+  cardContainer,
+  profileAvatarButton,
+  profileAvatarModal,
+  profileAvatarForm,
+  profileAvatarInput,
+  profileAvatarSubmitButton,
+  profileName,
+  profileDescription,
+  profileImage,
+  profileModal,
+  profileButton,
+  profileForm,
+  profileNameInput,
+  profileJobInput,
+  newCardModal,
+  newCardButton,
+  newCardForm,
+  newCardNameCityInput,
+  newCardLinkImgInput,
+  newCardFormButton,
+  imagePopup,
+  imageLink,
+  imageText,
+  cardСonfirmDeleteModal,
+  cardRemoveForm,
+  closeButtonsPopups,
+  validationConfig,
+  }from'./components/constants.js';
 
 // ==========================================  Изначальный вывод карточек на страницу  =================================================
 
-Promise.all([loadingCards, loadingInfoProfile])
-.then(() => {
+let myId = '';
 
-  loadingCards()
-  .then((result) => {    
-    result.forEach( (el) => {
-      cardContainer.append(createCard(el, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup));
-    })
-  });
-
-  loadingInfoProfile()
-  .then((result) => {
-    profileName.textContent = result.name;
-    profileDescription.textContent = result.about;
-    profileImage.style.backgroundImage = `url('${result.avatar}')`;
+Promise.all([loadingCards(), loadingInfoProfile()])
+.then((data) => {
+  profileName.textContent = data[1].name;
+  profileDescription.textContent = data[1].about;
+  profileImage.style.backgroundImage = `url('${data[1].avatar}')`;
+  myId = data[1]['_id'];
+    
+  data[0].forEach( (el) => {
+    cardContainer.append(createCard(el, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup, myId));
   })
-
 })
-.catch(err => {
-  console.log(err)
-})
+.catch(console.error)
 
 // ==========================================  Добавление новой карточки  =================================================
 
@@ -82,11 +59,9 @@ function addCard(evt) {
 
   addCardToServer(newCardNameCityInput, newCardLinkImgInput)
   .then((result) => {
-    cardContainer.prepend(createCard(result, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup))
+    cardContainer.prepend(createCard(result, handleButtonLike, handleImgPopup, handleСonfirmDeletePopup, myId))
   })
-  .catch(err => {
-    console.log(err)
-  })
+  .catch(console.error)
   .finally(() => {
     newCardFormButton.textContent = 'Сохранить';
   });
@@ -144,9 +119,9 @@ function handleProfileAvatarFormSubmit(evt) {
   editingProfileAvatar(profileAvatarInput.value)
   .then(res => {
     profileAvatarButton.style.backgroundImage = `url('${res.avatar}')`;
-    console.log(res)
     closeModal(profileAvatarModal);
   })
+  .catch(console.error)
   .finally(() => {
     newCardFormButton.textContent = 'Сохранить';
   });
@@ -162,7 +137,9 @@ function handleProfileFormSubmit(evt) {
   profileName.textContent = profileNameInput.value;
   profileDescription.textContent = profileJobInput.value;
 
-  editingProfile(profileName.textContent, profileDescription.textContent);
+  editingProfile(profileName.textContent, profileDescription.textContent)
+  .catch(console.error);
+
   closeModal(profileModal);
 }
 
@@ -181,6 +158,8 @@ function handleRemoveCard(evt) {
     deleteTarget.remove();
     closeModal(cardСonfirmDeleteModal);
   })
+.catch(console.error);
+
 }
 
 cardRemoveForm.addEventListener('click', handleRemoveCard)

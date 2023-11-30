@@ -11,6 +11,7 @@ const loadingInfoProfile = () => {
     }
   })
   .then(handleResponse)
+  
 }
 
 // ==========================================  Загрузка карточек с сервера  =================================================
@@ -23,8 +24,6 @@ const loadingCards = () => {
     }
   })
   .then(handleResponse)
-  // .then(response => response.json())
-  // .then(res => console.log(res))
 }
 
 // ==========================================  Редактирование Аватара  =================================================
@@ -41,9 +40,6 @@ const editingProfileAvatar = (profileAvatatInput) => {
     })
   })
   .then(handleResponse)
-  .catch((err) => {
-    console.log(err)
-  });
 }
 
 // ==========================================  Редактирование профиля  =================================================
@@ -59,9 +55,6 @@ const editingProfile = (profileName, profileDescription) => {
       name: profileName,
       about: profileDescription
     })
-  })
-  .catch((err) => {
-    console.log(err)
   })
 }
 
